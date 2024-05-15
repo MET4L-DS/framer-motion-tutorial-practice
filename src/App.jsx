@@ -1,9 +1,45 @@
+import { useEffect, useRef } from "react";
 import "./App.css";
 
-import { motion, useScroll } from "framer-motion";
+import {
+    motion,
+    useAnimation,
+    useInView,
+    useScroll,
+    useTransform,
+} from "framer-motion";
 
 function App() {
     const { scrollYProgress: progress } = useScroll();
+
+    const containerRef = useRef(null);
+
+    const isInView = useInView(containerRef, { once: true });
+    const mainControls = useAnimation();
+
+    const { scrollYProgress } = useScroll({
+        target: containerRef,
+        offset: ["start end", "end end"],
+    });
+
+    const paragraphOneValue = useTransform(
+        scrollYProgress,
+        [0, 1],
+        ["-100%", "0%"],
+    );
+
+    const paragraphTwoValue = useTransform(
+        scrollYProgress,
+        [0, 1],
+        ["100%", "0%"],
+    );
+
+    useEffect(() => {
+        if (isInView) {
+            mainControls.start("visible");
+        }
+    }, [isInView]);
+
     const gridContainerVariants = {
         hidden: { opacity: 0 },
         show: {
@@ -11,10 +47,25 @@ function App() {
             transition: { staggerChildren: 0.25, delayChildren: 0.25 },
         },
     };
+
     const gridItemVariants = {
         hidden: { opacity: 0 },
         show: { opacity: 1, transition: { duration: 1 } },
     };
+
+    const svgIconVarients = {
+        hidden: {
+            opacity: 0,
+            pathLength: 0,
+            fill: "rgba(252, 211, 77, 0)",
+        },
+        visible: {
+            opacity: 1,
+            pathLength: 1,
+            fill: "rgba(252, 211, 77, 1)",
+        },
+    };
+
     return (
         <div className="flex flex-col gap-10 overflow-x-hidden">
             <motion.section
@@ -126,8 +177,71 @@ function App() {
                 <motion.div
                     variants={gridItemVariants}
                     className="flex aspect-square items-center justify-center gap-10 rounded-lg bg-slate-800"
-                ></motion.div>
+                >
+                    <motion.svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        className="w-1/2 stroke-amber-500 stroke-[0.5]"
+                    >
+                        <motion.path
+                            d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z"
+                            variants={svgIconVarients}
+                            initial="hidden"
+                            animate="visible"
+                            transition={{
+                                default: {
+                                    duration: 2,
+                                    ease: "easeInOut",
+                                    delay: 1,
+                                    repeat: Infinity,
+                                    repeatType: "reverse",
+                                    repeatDelay: 1,
+                                },
+                                fill: {
+                                    duration: 2,
+                                    ease: "easeInOut",
+                                    delay: 2,
+                                    repeat: Infinity,
+                                    repeatType: "reverse",
+                                    repeatDelay: 1,
+                                },
+                            }}
+                        />
+                    </motion.svg>
+                </motion.div>
             </motion.section>
+            <section className="mb-10 flex flex-col gap-10" ref={containerRef}>
+                <motion.h1
+                    className="text-center text-5xl tracking-wide text-slate-100"
+                    animate={mainControls}
+                    initial="hidden"
+                    variants={{
+                        visible: { opacity: 1, y: 0 },
+                        hidden: { opacity: 0, y: 75 },
+                    }}
+                    transition={{ delay: 0.5, duration: 0.5, type: "tween" }}
+                >
+                    Lorem ipsum dolor.
+                </motion.h1>
+                <motion.p
+                    style={{ translateX: paragraphOneValue }}
+                    className="mx-auto w-1/2 text-4xl font-thin text-slate-100"
+                >
+                    Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+                    Eius consequatur corrupti omnis aliquid voluptatum
+                    voluptates explicabo fugiat, repudiandae quis excepturi?
+                </motion.p>
+                <motion.p
+                    style={{ translateX: paragraphTwoValue }}
+                    className="mx-auto w-1/2 text-4xl font-thin text-slate-100"
+                >
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                    Nobis cum corporis dolorum! Deserunt animi odit alias
+                    repudiandae asperiores autem! Exercitationem, eveniet harum
+                    minus molestias praesentium saepe pariatur. Nihil,
+                    voluptatem harum.
+                </motion.p>
+            </section>
         </div>
     );
 }

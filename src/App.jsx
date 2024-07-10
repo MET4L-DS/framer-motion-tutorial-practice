@@ -231,16 +231,53 @@ function App() {
                     Eius consequatur corrupti omnis aliquid voluptatum
                     voluptates explicabo fugiat, repudiandae quis excepturi?
                 </motion.p>
-                <motion.p
+                <motion.div
                     style={{ translateX: paragraphTwoValue }}
                     className="mx-auto w-1/2 text-4xl font-thin text-slate-100"
                 >
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Nobis cum corporis dolorum! Deserunt animi odit alias
-                    repudiandae asperiores autem! Exercitationem, eveniet harum
-                    minus molestias praesentium saepe pariatur. Nihil,
-                    voluptatem harum.
-                </motion.p>
+                    {"Lorem ipsum dolor sit amet consectetur adipisicing elit.\nNobis cum corporis dolorum! Deserunt animi odit alias repudiandae asperiores autem!\nExercitationem, eveniet harum minus molestias praesentium saepe pariatur.\nNihil, voluptatem harum."
+                        .split("\n")
+                        .map((line, index) => (
+                            <motion.p
+                                key={index}
+                                style={{ translateX: paragraphTwoValue }}
+                                className="flex flex-wrap gap-2"
+                                initial={{
+                                    opacity: 0,
+                                    // y: 25,
+                                }}
+                                animate={{
+                                    opacity: 1,
+                                    // y: 0,
+                                    transition: {
+                                        delay: index * 0.05,
+                                        duration: 0.5,
+                                    },
+                                }}
+                            >
+                                {line.split(" ").map((word, index) => (
+                                    <motion.span
+                                        key={index}
+                                        className="inline-block"
+                                        initial={{
+                                            opacity: 0,
+                                            y: 25,
+                                        }}
+                                        animate={{
+                                            opacity: 1,
+                                            y: 0,
+                                            transition: {
+                                                delay: index * 0.05,
+                                                duration: 0.5,
+                                            },
+                                        }}
+                                    >
+                                        {word}
+                                    </motion.span>
+                                ))}
+                            </motion.p>
+                        ))}
+                </motion.div>
             </section>
         </div>
     );

@@ -66,6 +66,9 @@ function App() {
         },
     };
 
+    const text =
+        "The Bharatiya Nyaya Sanhita (BNS) defines theft under **Section 304**. \n\n**Section 304(1)** states that theft is committed when a person dishonestly takes any movable property out of the possession of another person without that person’s consent. \n\n**Section 304(2)** outlines the punishment for theft, which is imprisonment of either description for a term which may extend to two years, or with fine, or with both. \n";
+
     return (
         <div className="flex flex-col gap-10 overflow-x-hidden">
             <motion.section
@@ -278,6 +281,12 @@ function App() {
                             </motion.p>
                         ))}
                 </motion.div>
+                <motion.p
+                    style={{ translateX: paragraphOneValue }}
+                    className="mx-auto w-1/2 text-4xl font-thin text-slate-100"
+                >
+                    {text}
+                </motion.p>
             </section>
         </div>
     );

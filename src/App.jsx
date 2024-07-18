@@ -9,6 +9,112 @@ import {
     useTransform,
 } from "framer-motion";
 
+const TextSection = ({ children, parentIndex }) => {
+    // if (children[0] === "*") {
+    //     return (
+    //         <BulletParagraph parentIndex={parentIndex}>
+    //             {children}
+    //         </BulletParagraph>
+    //     );
+    // }
+
+    // Splitting the children into an array of words and potential bold segments
+    const wordsAndBoldSegments = children
+        .split(/(\*\*.*?\*\*)/g)
+        .filter(Boolean);
+
+    let mainIndex = 0;
+
+    return (
+        <motion.section
+            initial={{ backgroundColor: "rgba(0,0,0,0)" }}
+            animate={{
+                backgroundColor: "rgba(100,100,100,0.5)",
+                transition: { duration: 2, delay: parentIndex * 0.5 },
+            }}
+            className="flex flex-wrap gap-x-2 bg-gray-500 p-2"
+        >
+            {wordsAndBoldSegments.map((segment, index) => {
+                // Check if the segment starts and ends with **
+                if (/(\*\*.*?\*\*)/g.test(segment)) {
+                    // Remove ** from the start and end and render as bold
+                    const boldText = segment.slice(2, -2);
+                    return (
+                        <AnimatedText
+                            className=" rounded-full bg-white px-2 pb-1 font-medium text-gray-500"
+                            key={index}
+                            delay={parentIndex + mainIndex++ * 0.1}
+                        >
+                            {boldText}
+                        </AnimatedText>
+                    );
+                } else {
+                    // Render regular text
+                    return segment.split(" ").map((word, wordIndex) => (
+                        <AnimatedText
+                            key={`${index}-${wordIndex}`}
+                            delay={parentIndex + mainIndex++ * 0.1}
+                        >
+                            {word}
+                        </AnimatedText>
+                    ));
+                }
+            })}
+        </motion.section>
+    );
+};
+
+const BulletParagraph = ({ children, parentIndex }) => {
+    return (
+        <motion.section
+            initial={{ backgroundColor: "rgba(0,0,0,0)" }}
+            animate={{
+                backgroundColor: "rgba(100,100,100,0.5)",
+                transition: { duration: 2, delay: parentIndex * 0.5 },
+            }}
+            className=" flex flex-wrap gap-x-2 bg-gray-500 p-2"
+        >
+            <div className="flex gap-x-2">
+                <div>
+                    <AnimatedText delay={parentIndex * 0.1}>{">"}</AnimatedText>
+                </div>
+                <div className="flex flex-wrap gap-x-2">
+                    {children.split(" ").map((word, index) => (
+                        <AnimatedText
+                            key={index}
+                            delay={parentIndex + index * 0.1}
+                        >
+                            {word}
+                        </AnimatedText>
+                    ))}
+                </div>
+            </div>
+        </motion.section>
+    );
+};
+
+const AnimatedText = ({ children, delay, className = "" }) => {
+    return (
+        <motion.span
+            initial={{
+                opacity: 0,
+                y: 20,
+            }}
+            animate={{
+                opacity: 1,
+                y: 0,
+                transition: {
+                    duration: 0.5,
+                    delay: delay,
+                },
+            }}
+            className={` inline-block ${className}`}
+        >
+            {children}
+        </motion.span>
+    );
+};
+
 function App() {
     const { scrollYProgress: progress } = useScroll();
 
@@ -285,7 +391,11 @@ function App() {
                     style={{ translateX: paragraphOneValue }}
                     className="mx-auto w-1/2 text-4xl font-thin text-slate-100"
                 >
-                    {text}
+                    {text.split("\n").map((para, index) => (
+                        <TextSection key={index} parentIndex={index}>
+                            {para}
+                        </TextSection>
+                    ))}
                 </motion.p>
             </section>
         </div>
